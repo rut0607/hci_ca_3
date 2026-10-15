@@ -49,6 +49,10 @@ Each flow on `flow.html` has a **Walk through it** button that shows a step trac
 
 Visibility of system status, error prevention and recovery, consistency, recognition over recall, user control and freedom, feedback, flexibility and efficiency, help and documentation, and accessibility. Accessibility covers labelled fields, announced errors, keyboard-operable seats, tabs and chart, a skip link, visible focus, and `prefers-reduced-motion` support. See `flow.html` for how each principle is applied.
 
+## Photos
+
+Event photos are from [Unsplash](https://unsplash.com) (free to use under the Unsplash License) and are stored locally in `images/events/`, so the prototype works offline. Each event uses `images/events/<event-id>.jpg`. Events created by organizers use a default photo for their category. The original CSS poster art still shows as a placeholder while a photo loads.
+
 ## Files
 
 ```
@@ -56,4 +60,5 @@ index.html … 404.html   17 pages
 css/styles.css          design system + components
 js/data.js              mock events, flows, localStorage store
 js/main.js              shared UI + one module per page
+images/events/          event photos (Unsplash)
 ```

@@ -159,6 +159,11 @@ document.addEventListener('click', e => {
   e.preventDefault(); toggleSave(b.dataset.save);
 });
 
+/* ---------- Event artwork: photo with the CSS poster as placeholder ----------
+   url() inside a custom property resolves against css/styles.css (where
+   var(--img) is used), hence the "../" prefix. */
+const artAttr = (x, extra = '') => { const img = imgOf(x); return `class="art ${x.art}${img ? ' photo' : ''}${extra ? ' ' + extra : ''}"${img ? ` style="--img:url('../${img}')"` : ''}`; };
+
 /* ---------- Event card ---------- */
 function cardHTML(e) {
   const d = toDate(e.date);
@@ -166,7 +171,7 @@ function cardHTML(e) {
   const flags = [drop ? `<span class="flag flag-drop">Price dropped ${fmt(e.was - e.price)}</span>` : '', e.left <= 50 ? `<span class="flag flag-low">Only ${e.left} left</span>` : ''].join('');
   return `<article class="card reveal" data-id="${e.id}">
     <button class="heart" data-save="${e.id}" aria-label="Save ${esc(e.title)}" aria-pressed="${isSaved(e.id)}">${ICON.heart}</button>
-    <a href="event.html?id=${e.id}" class="art ${e.art}" tabindex="-1" aria-hidden="true"><span class="tag">${e.cat}</span><span class="datebox"><b>${d.getDate()}</b><span>${MONTHS[d.getMonth()]}</span></span></a>
+    <a href="event.html?id=${e.id}" ${artAttr(e)} tabindex="-1" aria-hidden="true"><span class="tag">${e.cat}</span><span class="datebox"><b>${d.getDate()}</b><span>${MONTHS[d.getMonth()]}</span></span></a>
     <div class="card-body">
       <h3 class="card-title"><a href="event.html?id=${e.id}">${esc(e.title)}</a></h3>
       <span class="card-meta">${ICON.pin} ${esc(e.venue)}, ${esc(e.city)}</span>
@@ -474,7 +479,7 @@ pages.event = () => {
   const related = allEvents().filter(x => x.id !== e.id && (x.cat === e.cat || x.city === e.city) && x.date >= '2026-10-16').sort((a, b) => (b.cat === e.cat) - (a.cat === e.cat) || b.pop - a.pop).slice(0, 2);
   const left = e.left <= 50 ? `<p class="small urgent">${ICON.clock} Selling fast · only ${e.left} left</p>` : `<p class="small muted">${e.left.toLocaleString('en-IN')} tickets available</p>`;
   main.innerHTML = `
-  <section class="art ${e.art} event-hero">
+  <section ${artAttr(e, 'event-hero')}>
     <div class="container">
       <a class="back" href="events.html">${ICON.back} Back to events</a>
       <div><span class="tag">${e.cat}</span><h1>${esc(e.title)}</h1><p>${esc(e.blurb || '')}</p></div>
@@ -612,7 +617,7 @@ function ensureOrder() {
 }
 function orderSummaryHTML(order) {
   const e = getEvent(order.eventId) || EVENTS[0], tt = orderTotals(order);
-  return `<div class="mini"><div class="art ${e.art}"></div><div><b>${esc(e.title)}</b><span class="muted small">${fmtDate(e.date)} · ${fmtTime(e.time)}<br>${esc(e.venue)}, ${esc(e.city)}</span></div></div>
+  return `<div class="mini"><div ${artAttr(e)}></div><div><b>${esc(e.title)}</b><span class="muted small">${fmtDate(e.date)} · ${fmtTime(e.time)}<br>${esc(e.venue)}, ${esc(e.city)}</span></div></div>
     <div class="timer">${ICON.clock}<span>Tickets held for <b data-hold>10:00</b></span></div>
     ${order.items.map(i => `<div class="summary-row"><span class="muted">${i.qty} × ${i.name}</span><span>${fmt(i.qty * i.price)}</span></div>`).join('')}
     ${order.seats?.length ? `<div class="summary-row"><span class="muted">Seats</span><span>${order.seats.join(', ')}</span></div>` : ''}
@@ -697,7 +702,7 @@ pages.checkout = () => {
       const e = getEvent(order.eventId) || EVENTS[0];
       const id = 'SHT-' + (100000 + Math.floor(Math.random() * 900000));
       const bookings = store.get('bookings', []);
-      bookings.unshift({ id, eventId: e.id, title: e.title, art: e.art, cat: e.cat, date: e.date, time: e.time, venue: e.venue, city: e.city, items: order.items, seats: order.seats || [], total: orderTotals(order).total, status: 'confirmed', email: em.value.trim() });
+      bookings.unshift({ id, eventId: e.id, title: e.title, art: e.art, img: e.img, cat: e.cat, date: e.date, time: e.time, venue: e.venue, city: e.city, items: order.items, seats: order.seats || [], total: orderTotals(order).total, status: 'confirmed', email: em.value.trim() });
       store.set('bookings', bookings);
       store.del('order');
       location.href = `confirmation.html?b=${id}&new=1`;
@@ -762,7 +767,7 @@ pages.bookings = () => {
       const days = Math.round((d - toDate('2026-10-16')) / 864e5);
       const status = tab === 'cancelled' ? '<span class="status off">Refunded</span>' : tab === 'past' ? '<span class="status muted-s">Attended</span>' : `<span class="status">${days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : 'In ' + days + ' days'}</span>`;
       const again = tab !== 'upcoming' && b.eventId && getEvent(b.eventId) ? `<a href="event.html?id=${b.eventId}" class="btn btn-outline btn-sm">Book again</a>` : '';
-      return `<div class="booking reveal" data-id="${b.id}"><div class="art ${b.art}"></div>
+      return `<div class="booking reveal" data-id="${b.id}"><div ${artAttr(b)}></div>
         <div><span class="eyebrow" style="margin-bottom:2px">${fmtDate(b.date)} · ${fmtTime(b.time)}</span><h3 class="booking-title">${esc(b.title)}</h3><span class="muted small">${b.items.map(i => `${i.qty} × ${i.name}`).join(', ')} · ${esc(b.venue)}, ${esc(b.city)}</span></div>
         <div class="booking-side">${status}<div class="booking-actions">${tab !== 'cancelled' ? `<a href="confirmation.html?b=${b.id}" class="btn btn-outline btn-sm">View ticket</a>` : ''}${canCancel ? `<button type="button" class="btn btn-ghost btn-sm" data-cancel="${b.id}">Cancel</button>` : ''}${again}</div></div></div>`;
     }).join('');
@@ -966,7 +971,7 @@ pages['create-event'] = () => {
   Object.values(rules).forEach(liveValidate);
 
   function preview() {
-    const d = data(), e = { id: 'preview', title: d.title || 'Your event title', cat: d.cat, art: CAT_ART[d.cat], date: d.date || '2026-12-31', venue: d.venue || 'Venue', city: d.city, price: d.price || 0, left: d.left || 999 };
+    const d = data(), e = { id: 'preview', title: d.title || 'Your event title', cat: d.cat, art: CAT_ART[d.cat], img: CAT_IMG[d.cat], date: d.date || '2026-12-31', venue: d.venue || 'Venue', city: d.city, price: d.price || 0, left: d.left || 999 };
     $('#live-preview').innerHTML = cardHTML(e).replace(/<button class="heart".*?<\/button>/s, '').replace(/href="[^"]*"/g, 'href="#" onclick="return false"').replace('reveal', 'in');
     return d;
   }
@@ -991,7 +996,7 @@ pages['create-event'] = () => {
   function save(status) {
     const d = data(), all = store.get('org_events', []);
     const id = editing?.id || d.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36).slice(-4);
-    const ev = { ...d, id, status, art: CAT_ART[d.cat], blurb: d.about.split('. ')[0].slice(0, 90), doors: '', pop: 50, lineup: [] };
+    const ev = { ...d, id, status, art: CAT_ART[d.cat], img: CAT_IMG[d.cat], blurb: d.about.split('. ')[0].slice(0, 90), doors: '', pop: 50, lineup: [] };
     store.set('org_events', [ev, ...all.filter(e => e.id !== id)]);
     return ev;
   }

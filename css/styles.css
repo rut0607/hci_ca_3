@@ -568,3 +568,15 @@ a.node.start:hover, a.node.end:hover { color: #fff; }
   .reveal { opacity: 1; transform: none; } .chart div { height: var(--h); }
   .ticker { overflow-x: auto; }
 }
+
+/* ---------- Event photos ----------
+   The CSS poster (.art-N) stays underneath as the colour shown while
+   the photo loads; a dark gradient keeps text and tags legible. */
+.art.photo { background-image: linear-gradient(180deg, rgba(10,16,15,.08) 30%, rgba(10,16,15,.5)), var(--img); background-size: cover; background-position: center; color: #fff; }
+.event-hero.photo { background-image: linear-gradient(90deg, rgba(10,16,15,.78), rgba(10,16,15,.25) 70%), linear-gradient(180deg, transparent 50%, rgba(10,16,15,.45)), var(--img); }
+.event-hero.photo .container { color: #fff; }
+.event-hero.photo h1 { text-shadow: 0 2px 18px rgba(0,0,0,.35); }
+.auth-art.photo { background-image: linear-gradient(180deg, rgba(10,16,15,.1) 20%, rgba(10,16,15,.8)), var(--img); color: #fff; }
+.stub .art.photo { background-image: linear-gradient(180deg, rgba(10,16,15,.05) 35%, rgba(10,16,15,.75)), var(--img); }
+.mini .art.photo, .booking .art.photo { background-image: var(--img); }
+.card .art.photo { filter: saturate(.92); } .card:hover .art.photo { filter: saturate(1.05); }

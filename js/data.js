@@ -58,6 +58,13 @@ const CATEGORIES = ['Concert', 'Comedy', 'Festival', 'Theatre', 'Sports'];
 const CITIES = ['Mumbai', 'Bengaluru', 'Delhi', 'Pune'];
 const CAT_ART = { Concert: 'art-1', Comedy: 'art-2', Festival: 'art-3', Theatre: 'art-6', Sports: 'art-7' };
 
+// Photos (Unsplash, free licence) live in images/events. Each event uses
+// <id>.jpg; organizer-created events fall back to a photo per category.
+const IMG = name => `images/events/${name}.jpg`;
+EVENTS.forEach(e => { e.img = IMG(e.id); });
+const CAT_IMG = { Concert: IMG('default-concert'), Comedy: IMG('laugh-riot'), Festival: IMG('default-festival'), Theatre: IMG('hamlet-retold'), Sports: IMG('t20-night') };
+const imgOf = x => x.img || EVENTS.find(e => e.id === x.eventId)?.img || CAT_IMG[x.cat] || '';
+
 /* ---------- Store (safe localStorage) ---------- */
 const store = {
   get(k, fallback) { try { const v = localStorage.getItem('st_' + k); return v === null ? fallback : JSON.parse(v); } catch { return fallback; } },
@@ -81,7 +88,7 @@ const qs = new URLSearchParams(location.search);
 
 // Organizer-published events join the public catalogue.
 function allEvents() {
-  const mine = store.get('org_events', []).filter(e => e.status === 'Live');
+  const mine = store.get('org_events', []).filter(e => e.status === 'Live').map(e => ({ ...e, img: e.img || CAT_IMG[e.cat] }));
   return [...EVENTS, ...mine];
 }
 const getEvent = id => allEvents().find(e => e.id === id);
@@ -108,9 +115,9 @@ if (store.get('bookings', null) === null) {
   store.set('bookings', [
     { id: 'SHT-482913', eventId: 'northern-lights', title: 'Northern Lights Live', art: 'art-1', cat: 'Concert', date: '2026-11-08', time: '19:30', venue: 'Jio World Garden', city: 'Mumbai', items: [{ name: 'General admission', qty: 2, price: 1499 }], seats: [], total: 3148, status: 'confirmed' },
     { id: 'SHT-471120', eventId: 'late-night', title: 'The Late Night Stand-up', art: 'art-2', cat: 'Comedy', date: '2026-11-14', time: '20:00', venue: 'Phoenix Hall', city: 'Mumbai', items: [{ name: 'General admission', qty: 1, price: 799 }], seats: [], total: 839, status: 'confirmed' },
-    { id: 'SHT-402277', title: 'Rooftop Sessions Vol. 3', art: 'art-4', cat: 'Concert', date: '2026-09-12', time: '20:00', venue: 'Sky Lounge', city: 'Mumbai', items: [{ name: 'General admission', qty: 2, price: 899 }], seats: [], total: 1888, status: 'confirmed' },
-    { id: 'SHT-389014', title: 'Monsoon Comedy Hour', art: 'art-2', cat: 'Comedy', date: '2026-08-22', time: '19:00', venue: 'The Habitat', city: 'Mumbai', items: [{ name: 'General admission', qty: 1, price: 599 }], seats: [], total: 629, status: 'confirmed' },
-    { id: 'SHT-410552', title: 'Tughlaq: A Staged Reading', art: 'art-6', cat: 'Theatre', date: '2026-10-02', time: '19:00', venue: 'Prithvi Theatre', city: 'Mumbai', items: [{ name: 'General admission', qty: 2, price: 499 }], seats: [], total: 1048, status: 'cancelled' }
+    { id: 'SHT-402277', title: 'Rooftop Sessions Vol. 3', img: IMG('rooftop-sessions'), art: 'art-4', cat: 'Concert', date: '2026-09-12', time: '20:00', venue: 'Sky Lounge', city: 'Mumbai', items: [{ name: 'General admission', qty: 2, price: 899 }], seats: [], total: 1888, status: 'confirmed' },
+    { id: 'SHT-389014', title: 'Monsoon Comedy Hour', img: IMG('comedy-hour'), art: 'art-2', cat: 'Comedy', date: '2026-08-22', time: '19:00', venue: 'The Habitat', city: 'Mumbai', items: [{ name: 'General admission', qty: 1, price: 599 }], seats: [], total: 629, status: 'confirmed' },
+    { id: 'SHT-410552', title: 'Tughlaq: A Staged Reading', img: IMG('tughlaq'), art: 'art-6', cat: 'Theatre', date: '2026-10-02', time: '19:00', venue: 'Prithvi Theatre', city: 'Mumbai', items: [{ name: 'General admission', qty: 2, price: 499 }], seats: [], total: 1048, status: 'cancelled' }
   ]);
 }
 
