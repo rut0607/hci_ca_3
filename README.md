@@ -49,6 +49,18 @@ Each flow on `flow.html` has a **Walk through it** button that shows a step trac
 
 Visibility of system status, error prevention and recovery, consistency, recognition over recall, user control and freedom, feedback, flexibility and efficiency, help and documentation, and accessibility. Accessibility covers labelled fields, announced errors, keyboard-operable seats, tabs and chart, a skip link, visible focus, and `prefers-reduced-motion` support. See `flow.html` for how each principle is applied.
 
+## Wireframes (Figma)
+
+Low-fidelity wireframes are generated from the real pages, so they match the built layout exactly:
+
+- `wireframes/desktop/` has all 17 pages at 1440 px. `wireframes/mobile/` has 8 key pages at 390 px.
+- `wireframes/flows/` has one board per user flow, with each step's wireframe and arrows between them.
+- `wireframes/index.html` is a gallery of everything.
+
+To use them in Figma, drag the `.svg` files onto the canvas. Each becomes a frame with editable text (Inter and Fraunces) and shapes.
+
+To regenerate after changing a page, serve the site on port 8765 and run `./wireframes/export.sh && python3 wireframes/flows.py`.
+
 ## Photos
 
 Event photos are from [Unsplash](https://unsplash.com) (free to use under the Unsplash License) and are stored locally in `images/events/`, so the prototype works offline. Each event uses `images/events/<event-id>.jpg`. Events created by organizers use a default photo for their category. The original CSS poster art still shows as a placeholder while a photo loads.

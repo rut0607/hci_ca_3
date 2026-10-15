@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wireframe generator · Showtime</title>
+<style>
+  body { margin: 0; font: 14px/1.4 -apple-system, sans-serif; background: #eee; }
+  iframe { border: 0; background: #fff; display: block; }
+  #out { display: none; }
+</style>
+</head>
+<body>
+<!--
+  Turns a live page into a low-fidelity wireframe SVG that matches the real
+  layout: boxes for containers, crossed boxes for images, outlined controls
+  and the page's real copy. Usage:
+    wireframes/generator.html?page=index.html&w=1440[&user=1]
+  The SVG is written to #out (read by wireframes/export.sh) and
+  shown on screen.
+-->
+<textarea id="out"></textarea>
+<script>
+const P = new URLSearchParams(location.search);
+const PAGE = P.get('page') || 'index.html';
+const W = +P.get('w') || 1440;
+
+// Optional state so pages that need a signed-in user render fully.
+if (P.get('user')) localStorage.setItem('st_user', JSON.stringify({ name: 'Rut Vaghani', email: 'rut@example.com', city: 'Mumbai', since: 'Oct 2026' }));
+
+const C = { line: '#9b9b9b', soft: '#c9c9c9', fill: '#f3f3f3', fill2: '#e6e6e6', dark: '#4d4d4d', text: '#2b2b2b', muted: '#808080', img: '#dcdcdc' };
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const r1 = n => Math.round(n * 10) / 10;
+
+const frame = document.createElement('iframe');
+frame.width = W; frame.height = 900;
+frame.src = '../' + PAGE;
+document.body.append(frame);
+
+frame.onload = () => {
+  const doc = frame.contentDocument, win = frame.contentWindow;
+  // Freeze motion and show everything that animates in.
+  const st = doc.createElement('style');
+  st.textContent = '*,*::before,*::after{animation:none!important;transition:none!important} .reveal{opacity:1!important;transform:none!important} .hero .stub{transform:none!important} .chart div{height:var(--h)!important} .toasts,.tour,.confetti{display:none!important}';
+  doc.head.append(st);
+  setTimeout(() => build(doc, win), 600);
+};
+
+function lum(c) {
+  const m = c.match(/rgba?\(([^)]+)\)/); if (!m) return null;
+  const [r, g, b, a = 1] = m[1].split(',').map(Number);
+  if (a < .05) return null;
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+const isDark = c => { const l = lum(c); return l !== null && l < .5; };
+
+function build(doc, win) {
+  const H = Math.ceil(doc.documentElement.scrollHeight);
+  frame.height = H;
+  const out = [];
+  const add = s => out.push(s);
+  const rect = (b, o = {}) => add(`<rect x="${r1(b.x)}" y="${r1(b.y)}" width="${r1(b.w)}" height="${r1(b.h)}" rx="${o.rx || 0}" fill="${o.fill || 'none'}"${o.stroke ? ` stroke="${o.stroke}" stroke-width="${o.sw || 1}"` : ''}${o.dash ? ` stroke-dasharray="${o.dash}"` : ''}/>`);
+  const text = (x, y, s, o = {}) => add(`<text x="${r1(x)}" y="${r1(y)}" font-family="${o.serif ? 'Fraunces, Georgia, serif' : 'Inter, Helvetica, Arial, sans-serif'}" font-size="${o.size || 14}" font-weight="${o.weight || 400}" fill="${o.fill || C.text}"${o.anchor ? ` text-anchor="${o.anchor}"` : ''}${o.italic ? ' font-style="italic"' : ''}${o.len && o.serif ? ` textLength="${r1(o.len)}" lengthAdjust="spacingAndGlyphs"` : ''}>${esc(s)}</text>`);
+  const box = el => { const b = el.getBoundingClientRect(); return { x: b.left + win.scrollX, y: b.top + win.scrollY, w: b.width, h: b.height }; };
+  const image = (b, rx) => {
+    rect(b, { fill: C.img, stroke: C.line, rx });
+    add(`<path d="M${r1(b.x)} ${r1(b.y)}L${r1(b.x + b.w)} ${r1(b.y + b.h)}M${r1(b.x + b.w)} ${r1(b.y)}L${r1(b.x)} ${r1(b.y + b.h)}" stroke="${C.soft}" stroke-width="1"/>`);
+  };
+  const visible = (el, cs) => cs.display !== 'none' && cs.visibility !== 'hidden' && +cs.opacity > 0.05 && !el.closest('[hidden]');
+  const overlaps = (b, clip) => !clip || (b.x < clip.x + clip.w && b.x + b.w > clip.x && b.y < clip.y + clip.h && b.y + b.h > clip.y);
+  const cut = (b, clip) => { if (!clip) return b; const x = Math.max(b.x, clip.x), y = Math.max(b.y, clip.y); return { x, y, w: Math.min(b.x + b.w, clip.x + clip.w) - x, h: Math.min(b.y + b.h, clip.y + clip.h) - y }; };
+  const inClip = (b, clip) => !clip || (b.x + b.w / 2 >= clip.x && b.x + b.w / 2 <= clip.x + clip.w && b.y + b.h / 2 >= clip.y && b.y + b.h / 2 <= clip.y + clip.h);
+  const textColor = cs => { const l = lum(cs.color); return l === null ? C.text : l > .75 ? '#ffffff' : l > .35 ? C.muted : C.text; };
+
+  // Lines of a text node, measured word by word so wrapping matches the page.
+  function textLines(node, cs, clip) {
+    const words = []; const re = /\S+/g; let m; const range = doc.createRange();
+    while ((m = re.exec(node.data))) {
+      range.setStart(node, m.index); range.setEnd(node, m.index + m[0].length);
+      const r = range.getClientRects()[0]; if (!r || !r.width) continue;
+      words.push({ t: m[0], x: r.left + win.scrollX, y: r.top + win.scrollY, h: r.height, w: r.width });
+    }
+    const lines = [];
+    words.forEach(w => { const l = lines.find(l => Math.abs(l.y - w.y) < w.h / 2); if (l) { l.t += ' ' + w.t; l.w = w.x + w.w - l.x; } else lines.push({ ...w }); });
+    const size = parseFloat(cs.fontSize), serif = /Fraunces|Georgia/.test(cs.fontFamily);
+    lines.forEach(l => {
+      if (!inClip({ x: l.x, y: l.y, w: 1, h: l.h }, clip)) return;
+      const t = cs.textTransform === 'uppercase' ? l.t.toUpperCase() : l.t;
+      text(l.x, l.y + l.h * 0.5 + size * 0.36, t, { size: r1(size), weight: serif ? 600 : (+cs.fontWeight >= 600 ? 600 : +cs.fontWeight >= 500 ? 500 : 400), fill: textColor(cs), italic: cs.fontStyle === 'italic', serif, len: l.w });
+    });
+  }
+
+  function walk(el, clip) {
+    const cs = win.getComputedStyle(el);
+    if (!visible(el, cs)) return;
+    // Purely decorative layers (glows, duplicated ticker items) are skipped.
+    if (el.matches('.hero-glow, .ticker a[aria-hidden="true"]')) return;
+    const full = box(el);
+    if (!full.w || !full.h) { if (cs.display !== 'contents') return; }
+    if (!overlaps(full, clip) && cs.position !== 'fixed') return;
+    const b = cut(full, cs.position === 'fixed' ? null : clip);
+    const tag = el.tagName.toLowerCase(), cls = el.classList;
+    const rx = Math.min(parseFloat(cs.borderTopLeftRadius) || 0, b.h / 2);
+
+    if (tag === 'svg') {
+      if (cls.contains('qr')) { image(b, 2); return; }
+      if (b.w < 40) { add(`<circle cx="${r1(b.x + b.w / 2)}" cy="${r1(b.y + b.h / 2)}" r="${r1(Math.min(b.w, b.h) / 2 - 1)}" fill="none" stroke="${textColor(cs) === '#ffffff' ? '#fff' : C.line}"/>`); }
+      return;
+    }
+    if (tag === 'img' || tag === 'video') { image(b, rx); return; }
+    if (tag === 'input' || tag === 'select' || tag === 'textarea') {
+      const type = (el.type || '').toLowerCase();
+      if (type === 'hidden' || type === 'file') return;
+      if (type === 'checkbox' && cls.length === 0 && el.closest('.switch') || el.closest('.switch') && type === 'checkbox') {
+        rect(b, { rx: b.h / 2, fill: el.checked ? C.dark : C.fill2 });
+        add(`<circle cx="${r1(el.checked ? b.x + b.w - b.h / 2 : b.x + b.h / 2)}" cy="${r1(b.y + b.h / 2)}" r="${r1(b.h / 2 - 3)}" fill="#fff"/>`); return;
+      }
+      if (type === 'checkbox') { rect(b, { rx: 3, fill: el.checked ? C.dark : '#fff', stroke: C.line }); return; }
+      if (type === 'radio') { if (cs.display === 'none') return; add(`<circle cx="${r1(b.x + b.w / 2)}" cy="${r1(b.y + b.h / 2)}" r="${r1(b.w / 2)}" fill="#fff" stroke="${C.line}"/>`); return; }
+      if (type === 'range') {
+        add(`<line x1="${r1(b.x)}" y1="${r1(b.y + b.h / 2)}" x2="${r1(b.x + b.w)}" y2="${r1(b.y + b.h / 2)}" stroke="${C.line}" stroke-width="3" stroke-linecap="round"/>`);
+        const p = (el.value - el.min) / (el.max - el.min);
+        add(`<circle cx="${r1(b.x + b.w * p)}" cy="${r1(b.y + b.h / 2)}" r="8" fill="#fff" stroke="${C.dark}" stroke-width="2"/>`); return;
+      }
+      const bare = parseFloat(cs.borderTopWidth) === 0;
+      if (!bare) rect(b, { rx, fill: '#fff', stroke: C.line });
+      const val = tag === 'select' ? el.options[el.selectedIndex]?.text : el.value;
+      const shown = val || el.placeholder || (type === 'date' ? 'dd/mm/yyyy' : type === 'time' ? '--:--' : '');
+      const size = parseFloat(cs.fontSize), pl = parseFloat(cs.paddingLeft);
+      if (shown) text(b.x + pl, (tag === 'textarea' ? b.y + parseFloat(cs.paddingTop) + size : b.y + b.h / 2 + size * 0.36), shown, { size, fill: val ? C.text : '#a8a8a8' });
+      if (tag === 'select' || type === 'date') add(`<path d="M${r1(b.x + b.w - 20)} ${r1(b.y + b.h / 2 - 2)}l4 4 4-4" fill="none" stroke="${C.muted}" stroke-width="1.5"/>`);
+      return;
+    }
+
+    // Image placeholders: poster art, avatars, card logos, barcodes.
+    const isImage = cls.contains('art') || cls.contains('bars') || cls.contains('cc') || (cls.contains('avatar') && !el.closest('.avatar-btn'));
+    const isButton = tag === 'button' || cls.contains('btn') || cls.contains('chip') || cls.contains('seat') || el.closest('.qty') === el;
+    const bg = cs.backgroundColor, bw = parseFloat(cs.borderTopWidth) || parseFloat(cs.borderLeftWidth) || parseFloat(cs.borderBottomWidth);
+    const hasBorder = bw > 0 && cs.borderTopStyle !== 'none' || bw > 0 && cs.borderBottomStyle !== 'none';
+
+    if (isImage) {
+      if (cls.contains('event-hero') || cls.contains('auth-art')) image(b, 0); else image(b, rx);
+    } else if (isButton && tag !== 'a' || cls.contains('btn')) {
+      if (cls.contains('seat')) { rect(b, { rx: 3, fill: cls.contains('selected') ? C.dark : cls.contains('taken') ? C.fill2 : '#fff', stroke: C.line }); return; }
+      const dark = isDark(bg);
+      const filled = lum(bg) !== null && !dark && lum(bg) < .97;
+      if (dark) rect(b, { rx, fill: C.dark });
+      else if (hasBorder || filled) rect(b, { rx, fill: filled ? C.fill2 : '#fff', stroke: hasBorder ? C.line : null });
+    } else {
+      const l = lum(bg);
+      const sides = ['Top', 'Right', 'Bottom', 'Left'].map(s => parseFloat(cs[`border${s}Width`]) > 0 && cs[`border${s}Style`] !== 'none');
+      if (l === null && /gradient/.test(cs.backgroundImage) && tag !== 'body') rect(b, { fill: C.fill });
+      if (l !== null && tag !== 'body' && tag !== 'html') {
+        const fill = l < .5 ? C.dark : l < .97 ? (l < .93 ? C.fill2 : C.fill) : '#fff';
+        if (fill !== '#fff' || sides.every(Boolean)) rect(b, { rx, fill, stroke: sides.every(Boolean) ? C.line : null, dash: cs.borderTopStyle === 'dashed' ? '5 4' : null });
+      } else if (sides.every(Boolean)) rect(b, { rx, stroke: C.line, dash: cs.borderTopStyle === 'dashed' ? '5 4' : null });
+      // Single-side rules (dividers, underlines, step bars).
+      [['Top', b.x, b.y, b.x + b.w, b.y], ['Bottom', b.x, b.y + b.h, b.x + b.w, b.y + b.h], ['Left', b.x, b.y, b.x, b.y + b.h]].forEach(([s, x1, y1, x2, y2]) => {
+        if (sides.every(Boolean)) return;
+        const w = parseFloat(cs[`border${s}Width`]);
+        if (w > 0 && cs[`border${s}Style`] !== 'none' && lum(cs[`border${s}Color`]) !== null) add(`<line x1="${r1(x1)}" y1="${r1(y1)}" x2="${r1(x2)}" y2="${r1(y2)}" stroke="${isDark(cs[`border${s}Color`]) ? C.dark : C.soft}" stroke-width="${w}"${cs[`border${s}Style`] === 'dashed' ? ' stroke-dasharray="5 4"' : ''}/>`);
+      });
+    }
+
+    // Numbered steps are drawn with CSS ::before/::after, so add them by hand.
+    if (el.matches('.stepper li, .form-steps li')) {
+      const n = [...el.parentElement.children].indexOf(el) + 1, stepper = el.matches('.stepper li');
+      const on = el.matches('.done, .current, .on'), r = stepper ? 13 : 12, cx = b.x + r, cy = stepper ? b.y + b.h / 2 : b.y + 4 + 8 + r;
+      add(`<circle cx="${r1(cx)}" cy="${r1(cy)}" r="${r}" fill="${on ? C.dark : '#fff'}" stroke="${on ? C.dark : C.line}"/>`);
+      text(cx, cy + 4.5, el.classList.contains('done') ? '✓' : String(n), { size: 12, weight: 600, fill: on ? '#fff' : C.muted, anchor: 'middle' });
+      if (stepper && el.nextElementSibling) add(`<line x1="${r1(b.x + b.w - 60)}" y1="${r1(cy)}" x2="${r1(b.x + b.w - 12)}" y2="${r1(cy)}" stroke="${C.soft}"/>`);
+    }
+    if (el.matches('.steps .step')) text(b.x, b.y + 36, '0' + ([...el.parentElement.children].indexOf(el) + 1), { size: 17.6, weight: 600, fill: C.muted, serif: true });
+
+    // Children: clip to scrolling/overflow containers.
+    let next = clip;
+    if (cs.overflowX !== 'visible' || cs.overflowY !== 'visible') {
+      next = cut(full, clip);
+    }
+    for (const n of el.childNodes) {
+      if (n.nodeType === 3 && n.data.trim()) textLines(n, cs, next);
+      else if (n.nodeType === 1) walk(n, next);
+    }
+  }
+
+  walk(doc.body, null);
+  const title = doc.title.replace(' · Showtime', '');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><title>${esc(title)}</title><rect width="${W}" height="${H}" fill="#ffffff"/>${out.join('')}</svg>`;
+  document.getElementById('out').textContent = svg;
+  document.body.insertAdjacentHTML('beforeend', svg);
+  frame.remove();
+  document.title = 'DONE';
+}
+</script>
+</body>
+</html>
