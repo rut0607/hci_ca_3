@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review and pay · Showtime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><i></i>Showtime</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="">Discover</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="saved.html" class="">Saved</a></li>
+      <li><a href="bookings.html" class="">My tickets</a></li>
+      <li><a href="help.html" class="">Help</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="organizer.html" class="small muted" style="margin-right:6px">For organizers</a>
+      <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <div class="container">
+    <a class="back" href="tickets.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5 M11 6l-6 6 6 6"/></svg> Back to tickets</a>
+    <ol class="stepper" aria-label="Booking progress"><li class="done"><span>Choose tickets</span></li><li class="current" aria-current="step"><span>Review &amp; pay</span></li><li class=""><span>Get your ticket</span></li></ol>
+    <div class="page-head" style="padding-bottom:0"><h1>Review &amp; <em>pay</em></h1></div>
+    <form class="layout-main" id="checkout-form" novalidate style="padding-top:20px">
+      <div>
+        <div class="guest-box"><span>Have an account? Log in to fill in your details. Or just continue as a guest.</span><a href="login.html?next=checkout.html" class="btn btn-outline btn-sm" style="background:#fff">Log in</a></div>
+        <div class="panel">
+          <h2>Contact details</h2>
+          <div class="field-row"><div class="field"><label for="fn">First name</label><input id="fn" autocomplete="given-name"></div><div class="field"><label for="ln">Last name</label><input id="ln" autocomplete="family-name"></div></div>
+          <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="email"><p class="hint">Your e-ticket will be sent here.</p></div>
+          <div class="field" style="margin:0"><label for="ph">Phone <span class="muted">(optional)</span></label><input id="ph" type="tel" autocomplete="tel"></div>
+        </div>
+        <div class="panel">
+          <h2>Payment</h2>
+          <fieldset class="pay-methods"><legend class="sr-only">Payment method</legend><label><input type="radio" name="pay" value="card" checked>Card</label><label><input type="radio" name="pay" value="upi">UPI</label><label><input type="radio" name="pay" value="net">Net banking</label></fieldset>
+          <div data-method="card">
+            <div class="field"><label for="cn">Card number</label><div class="input-icon right"><input id="cn" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"><span id="card-brand" class="card-brand" aria-live="polite"></span></div></div>
+            <div class="field-row"><div class="field"><label for="ex">Expiry</label><input id="ex" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY"></div><div class="field"><label for="cv">CVV</label><input id="cv" inputmode="numeric" autocomplete="cc-csc" placeholder="123"></div></div>
+            <p class="demo-note"><b>Demo cards</b> · <code>4242 4242 4242 4242</code> succeeds · <code>4000 0000 0000 0002</code> is declined. Use any future expiry and CVV.</p>
+          </div>
+          <div data-method="upi" hidden><div class="field" style="margin:0"><label for="upi">UPI ID</label><input id="upi" placeholder="name@bank" autocomplete="off"><p class="hint">You’ll get a request in your UPI app to approve.</p></div></div>
+          <div data-method="net" hidden><div class="field" style="margin:0"><label for="bank">Bank</label><select id="bank"><option value="">Choose your bank</option><option>HDFC Bank</option><option>ICICI Bank</option><option>State Bank of India</option><option>Axis Bank</option><option>Kotak Mahindra Bank</option></select><p class="hint">You’ll be taken to your bank to approve the payment.</p></div></div>
+        </div>
+        <div class="check terms-row" id="terms-row"><input type="checkbox" id="terms"><label for="terms">I agree to the <a href="help.html?q=cancel" class="link">terms</a> and the 48-hour cancellation policy.</label></div>
+      </div>
+      <aside class="sticky">
+        <div class="panel">
+          <div id="co-summary"></div>
+          <button class="btn btn-primary btn-block" id="pay-btn" type="submit" style="margin-top:20px">Pay</button>
+          <p class="hint secure"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11h14v10H5z M8 11V7a4 4 0 0 1 8 0v4"/></svg> Payments are encrypted. Free cancellation up to 48 hours before.</p>
+        </div>
+      </aside>
+    </form>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a href="index.html" class="logo" style="color:var(--ink);margin-bottom:12px"><i></i>Showtime</a><p style="max-width:280px">Find and book live events with clear prices and no surprises.</p></div>
+      <div><h4>Explore</h4><ul><li><a href="events.html">All events</a></li><li><a href="saved.html">Saved</a></li><li><a href="bookings.html">My tickets</a></li></ul></div>
+      <div><h4>Organizers</h4><ul><li><a href="organizer.html">Dashboard</a></li><li><a href="create-event.html">Create an event</a></li></ul></div>
+      <div><h4>Support</h4><ul><li><a href="help.html">Help centre</a></li><li><a href="flow.html">User flow</a></li><li><a href="#">Terms &amp; privacy</a></li></ul></div>
+    </div>
+    <div class="footer-base"><span>© 2026 Showtime · HCI CA-3 design project</span><span>Made with care for clarity</span></div>
+  </div>
+</footer>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

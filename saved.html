@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved events · Showtime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><i></i>Showtime</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="">Discover</a></li>
+      <li><a href="events.html" class="">Events</a></li>
+      <li><a href="saved.html" class="active">Saved</a></li>
+      <li><a href="bookings.html" class="">My tickets</a></li>
+      <li><a href="help.html" class="">Help</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="organizer.html" class="small muted" style="margin-right:6px">For organizers</a>
+      <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <div class="container" style="padding-bottom:72px">
+    <div class="page-head"><h1>Saved <em>events</em></h1><p class="muted" id="saved-count">&nbsp;</p></div>
+    <div id="saved-note"></div>
+    <div class="grid grid-3" id="saved-grid"></div>
+    <div class="empty" id="saved-empty" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg><h3>Nothing saved yet</h3><p>Tap the heart on any event to keep it here. We’ll tell you if the price drops.</p><a href="events.html" class="btn btn-primary btn-sm">Browse events</a></div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a href="index.html" class="logo" style="color:var(--ink);margin-bottom:12px"><i></i>Showtime</a><p style="max-width:280px">Find and book live events with clear prices and no surprises.</p></div>
+      <div><h4>Explore</h4><ul><li><a href="events.html">All events</a></li><li><a href="saved.html">Saved</a></li><li><a href="bookings.html">My tickets</a></li></ul></div>
+      <div><h4>Organizers</h4><ul><li><a href="organizer.html">Dashboard</a></li><li><a href="create-event.html">Create an event</a></li></ul></div>
+      <div><h4>Support</h4><ul><li><a href="help.html">Help centre</a></li><li><a href="flow.html">User flow</a></li><li><a href="#">Terms &amp; privacy</a></li></ul></div>
+    </div>
+    <div class="footer-base"><span>© 2026 Showtime · HCI CA-3 design project</span><span>Made with care for clarity</span></div>
+  </div>
+</footer>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

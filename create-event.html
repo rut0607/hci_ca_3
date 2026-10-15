@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create event · Showtime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><i></i>Showtime</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="">Discover</a></li>
+      <li><a href="events.html" class="">Events</a></li>
+      <li><a href="saved.html" class="">Saved</a></li>
+      <li><a href="bookings.html" class="">My tickets</a></li>
+      <li><a href="help.html" class="">Help</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="organizer.html" class="small muted" style="margin-right:6px">For organizers</a>
+      <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <div class="container" style="padding-bottom:72px">
+    <a class="back" href="organizer.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5 M11 6l-6 6 6 6"/></svg> Dashboard</a>
+    <div class="page-head"><h1 id="ce-title">Create an <em>event</em></h1><p class="muted">Four short steps. You can save a draft at any point and edit it later.</p></div>
+    <div class="layout-sidebar layout-account">
+      <aside>
+        <nav class="side-nav" aria-label="Steps" style="position:static"><ol class="form-steps"><li><button type="button" data-go="1">Basics</button></li><li><button type="button" data-go="2">Date &amp; venue</button></li><li><button type="button" data-go="3">Tickets</button></li><li><button type="button" data-go="4">Review &amp; publish</button></li></ol></nav>
+        <div class="preview-box"><span class="eyebrow">Live preview</span><div id="live-preview" aria-live="off"></div><p class="hint">This is how buyers will see your event.</p></div>
+      </aside>
+      <form id="event-form" novalidate>
+        <div class="panel" data-step="1"><h2>Basics</h2>
+          <div class="field"><label for="t">Event title</label><input id="t" placeholder="e.g. Northern Lights Live" maxlength="60"></div>
+          <div class="field-row"><div class="field"><label for="cat">Category</label><select id="cat"><option>Concert</option><option>Comedy</option><option>Festival</option><option>Theatre</option><option>Sports</option></select></div><div class="field"><label for="age">Age limit</label><select id="age"><option>All ages</option><option>16+</option><option>18+</option></select></div></div>
+          <div class="field"><label for="d">Description</label><textarea id="d" placeholder="Tell people what to expect: who’s playing, how long it runs, what to bring."></textarea></div>
+          <span class="label">Cover image <span class="muted">(optional)</span></span>
+          <div class="upload" id="upload"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16v4h16v-4 M12 4v12 M7 9l5-5 5 5"/></svg><div id="upload-msg">Drag an image here or <button type="button" class="text-btn">browse</button></div><div class="hint">1600 × 900 recommended · JPG or PNG</div><input type="file" id="cover" accept="image/*" hidden></div>
+        </div>
+        <div class="panel" data-step="2" hidden><h2>Date &amp; venue</h2>
+          <div class="field-row"><div class="field"><label for="dt">Date</label><input id="dt" type="date"></div><div class="field"><label for="tm">Start time</label><input id="tm" type="time" value="19:30"></div></div>
+          <div class="field-row"><div class="field" style="margin:0"><label for="v">Venue</label><input id="v" placeholder="e.g. NCPA"></div><div class="field" style="margin:0"><label for="c">City</label><select id="c"><option>Mumbai</option><option>Bengaluru</option><option>Delhi</option><option>Pune</option></select></div></div>
+        </div>
+        <div class="panel" data-step="3" hidden><h2>Tickets</h2>
+          <div class="field-row"><div class="field"><label for="n">Ticket name</label><input id="n" value="General admission"></div><div class="field"><label for="p">Price (₹)</label><input id="p" type="number" min="0" step="1" value="1499"><p class="hint">Enter 0 for a free event.</p></div></div>
+          <div class="field" style="margin:0"><label for="cap">Capacity</label><input id="cap" type="number" min="1" value="500"><p class="hint">Premium and VIP tiers are added automatically. Buyers pay a 5% service fee on top.</p></div>
+        </div>
+        <div class="panel" data-step="4" hidden><h2>Review &amp; publish</h2><p class="muted">Check everything before it goes live. Your event appears on Events as soon as you publish.</p><div id="review"></div></div>
+        <div class="actions wizard-actions"><button type="button" class="btn btn-outline" id="prev" hidden>Back</button><span style="flex:1"></span><button type="button" class="btn btn-ghost" id="draft">Save draft</button><button type="button" class="btn btn-primary" id="next">Continue</button></div>
+      </form>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a href="index.html" class="logo" style="color:var(--ink);margin-bottom:12px"><i></i>Showtime</a><p style="max-width:280px">Find and book live events with clear prices and no surprises.</p></div>
+      <div><h4>Explore</h4><ul><li><a href="events.html">All events</a></li><li><a href="saved.html">Saved</a></li><li><a href="bookings.html">My tickets</a></li></ul></div>
+      <div><h4>Organizers</h4><ul><li><a href="organizer.html">Dashboard</a></li><li><a href="create-event.html">Create an event</a></li></ul></div>
+      <div><h4>Support</h4><ul><li><a href="help.html">Help centre</a></li><li><a href="flow.html">User flow</a></li><li><a href="#">Terms &amp; privacy</a></li></ul></div>
+    </div>
+    <div class="footer-base"><span>© 2026 Showtime · HCI CA-3 design project</span><span>Made with care for clarity</span></div>
+  </div>
+</footer>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

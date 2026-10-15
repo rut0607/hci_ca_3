@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browse events · Showtime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><i></i>Showtime</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="">Discover</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="saved.html" class="">Saved</a></li>
+      <li><a href="bookings.html" class="">My tickets</a></li>
+      <li><a href="help.html" class="">Help</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="organizer.html" class="small muted" style="margin-right:6px">For organizers</a>
+      <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <div class="container">
+    <a class="back" href="index.html"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5 M11 6l-6 6 6 6"/></svg> Home</a>
+    <div class="page-head"><h1>All <em>events</em></h1><p class="muted" id="count" aria-live="polite">&nbsp;</p></div>
+    <div class="layout-sidebar">
+      <aside class="filters" id="filters" aria-label="Filters">
+        <div class="filters-head"><h3>Filters</h3><button type="button" class="text-btn" data-clear>Clear all</button></div>
+        <div class="filter-group"><label for="f-q">Search</label><div class="input-icon"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M21 21l-4.3-4.3"/></svg><input id="f-q" type="search" placeholder="Event, venue or city" autocomplete="off" data-search></div></div>
+        <div class="filter-group"><span class="label" id="cat-label">Category</span><div id="cat-boxes" role="group" aria-labelledby="cat-label"></div></div>
+        <div class="filter-group"><label for="fcity">City</label><select id="fcity"></select></div>
+        <div class="filter-group"><span class="label">When</span><div class="chip-row"><button type="button" class="chip" data-when="weekend" aria-pressed="false">This weekend</button><button type="button" class="chip" data-when="month" aria-pressed="false">Next 30 days</button></div>
+          <label for="fdate" style="margin-top:14px">From date</label><input id="fdate" type="date" min="2026-10-16"></div>
+        <div class="filter-group"><label for="price">Max price: <span id="price-out">Any price</span></label><input id="price" type="range" min="500" max="5000" step="100" value="5000"><div class="range-ends"><span>₹500</span><span>Any</span></div></div>
+        <button type="button" class="btn btn-primary btn-block filters-done" id="filters-done">Show results</button>
+      </aside>
+      <section aria-label="Results">
+        <div class="results-bar">
+          <button type="button" class="btn btn-outline btn-sm filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filters">Filters<span id="filter-count"></span></button>
+          <div class="pill-row" id="pills" style="margin:0"></div>
+          <div class="sort"><label for="sort" class="small">Sort by</label><select id="sort"><option value="date">Date</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option><option value="popular">Popularity</option></select></div>
+        </div>
+        <div class="grid grid-2" id="results"></div>
+        <div class="empty" id="empty" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M21 21l-4.3-4.3"/></svg><h3>No events match your filters</h3><p>Try a different date, widen the price range or remove a filter.</p><button type="button" class="btn btn-outline btn-sm" data-clear>Clear all filters</button></div>
+        <p class="muted small" id="shown" style="text-align:center;margin:28px 0 12px"></p>
+        <div class="actions" style="margin-bottom:72px"><button type="button" class="btn btn-outline" id="load-more">Load more</button></div>
+      </section>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a href="index.html" class="logo" style="color:var(--ink);margin-bottom:12px"><i></i>Showtime</a><p style="max-width:280px">Find and book live events with clear prices and no surprises.</p></div>
+      <div><h4>Explore</h4><ul><li><a href="events.html">All events</a></li><li><a href="saved.html">Saved</a></li><li><a href="bookings.html">My tickets</a></li></ul></div>
+      <div><h4>Organizers</h4><ul><li><a href="organizer.html">Dashboard</a></li><li><a href="create-event.html">Create an event</a></li></ul></div>
+      <div><h4>Support</h4><ul><li><a href="help.html">Help centre</a></li><li><a href="flow.html">User flow</a></li><li><a href="#">Terms &amp; privacy</a></li></ul></div>
+    </div>
+    <div class="footer-base"><span>© 2026 Showtime · HCI CA-3 design project</span><span>Made with care for clarity</span></div>
+  </div>
+</footer>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

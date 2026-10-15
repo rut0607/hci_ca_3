@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment failed · Showtime</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container nav">
+    <a href="index.html" class="logo"><i></i>Showtime</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="">Discover</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="saved.html" class="">Saved</a></li>
+      <li><a href="bookings.html" class="">My tickets</a></li>
+      <li><a href="help.html" class="">Help</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="organizer.html" class="small muted" style="margin-right:6px">For organizers</a>
+      <a href="login.html" class="btn btn-outline btn-sm">Log in</a>
+      <a href="signup.html" class="btn btn-primary btn-sm">Sign up</a>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+  <div class="container">
+    <ol class="stepper" aria-label="Booking progress"><li class="done"><span>Choose tickets</span></li><li class="current" aria-current="step"><span>Review &amp; pay</span></li><li class=""><span>Get your ticket</span></li></ol>
+    <div class="confirm">
+      <div class="tick err pop-in"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4 M12 17h.01 M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+      <h1>Payment didn’t <em>go through</em>.</h1>
+      <p class="muted">Your card was not charged, and your tickets are still held while you try again.</p>
+      <div class="alert" role="alert" style="margin-bottom:24px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4 M12 17h.01 M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg><span><b>Reason:</b> Your bank declined the transaction. Check your card details, or try UPI or net banking instead.</span></div>
+      <div class="panel" style="text-align:left"><h3>Your order</h3><div id="pf-summary"></div></div>
+      <div class="actions" style="margin-top:24px"><a href="checkout.html" class="btn btn-primary">Try again</a><a href="checkout.html?method=upi" class="btn btn-outline">Pay with UPI instead</a><a href="tickets.html" id="change-tickets" class="btn btn-outline">Change tickets</a></div>
+      <p class="small muted" style="margin-top:24px">Still stuck? <a href="help.html?q=payment" class="link">Get help with payments</a></p>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><a href="index.html" class="logo" style="color:var(--ink);margin-bottom:12px"><i></i>Showtime</a><p style="max-width:280px">Find and book live events with clear prices and no surprises.</p></div>
+      <div><h4>Explore</h4><ul><li><a href="events.html">All events</a></li><li><a href="saved.html">Saved</a></li><li><a href="bookings.html">My tickets</a></li></ul></div>
+      <div><h4>Organizers</h4><ul><li><a href="organizer.html">Dashboard</a></li><li><a href="create-event.html">Create an event</a></li></ul></div>
+      <div><h4>Support</h4><ul><li><a href="help.html">Help centre</a></li><li><a href="flow.html">User flow</a></li><li><a href="#">Terms &amp; privacy</a></li></ul></div>
+    </div>
+    <div class="footer-base"><span>© 2026 Showtime · HCI CA-3 design project</span><span>Made with care for clarity</span></div>
+  </div>
+</footer>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
