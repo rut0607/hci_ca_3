@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Copy wireframes for Figma</title>
+<style>
+  body { font: 15px/1.5 -apple-system, sans-serif; margin: 24px; color: #222; }
+  h1 { font-size: 1.3rem; margin: 0 0 4px; } p { color: #666; margin: 0 0 16px; }
+  h2 { font-size: 1rem; margin: 20px 0 8px; }
+  button { display: block; width: 100%; text-align: left; font: inherit; padding: 8px 12px; margin-bottom: 6px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+  button.done { background: #e8f3ef; border-color: #7bb8a4; }
+</style>
+</head>
+<body>
+<!-- Click a button to copy that wireframe's SVG markup; paste it into a
+     Figma file (Cmd+V) and it becomes an editable frame. -->
+<h1>Copy wireframes for Figma</h1>
+<p>Click a wireframe, then paste it into Figma with Cmd+V.</p>
+<div id="list"></div>
+<script>
+const groups = {
+  'User flows': ['Flow 1 - Book a ticket', 'Flow 2 - Returning user', 'Flow 3 - Error recovery', 'Flow 4 - New user sign-up', 'Flow 5 - Manage a booking', 'Flow 6 - Organizer'].map(n => 'flows/' + n),
+  'Desktop': ['01 Home', '02 Events - search and filter', '03 Event details', '04 Select tickets and seats', '05 Review and pay', '06 Payment failed', '07 Confirmation', '08 Saved events', '09 My tickets', '10 Log in', '11 Sign up', '12 Account settings', '13 Organizer dashboard', '14 Create event', '15 Help centre', '16 404', '17 Sitemap and user flows'].map(n => 'desktop/' + n),
+  'Mobile': ['01 Home', '02 Events', '03 Event details', '04 Select tickets', '05 Review and pay', '07 Confirmation', '09 My tickets', '10 Log in'].map(n => 'mobile/' + n)
+};
+const list = document.getElementById('list');
+// One button that copies every wireframe as a JSON bundle (used to build the Figma file in one go).
+const all = document.createElement('button');
+all.id = 'copy-all'; all.textContent = 'Copy all wireframes (bundle)';
+all.onclick = async () => {
+  const items = [];
+  for (const [g, paths] of Object.entries(groups)) for (const p of paths)
+    items.push({ group: { 'User flows': 'flows', Desktop: 'desktop', Mobile: 'mobile' }[g], name: p.split('/')[1], svg: await fetch(encodeURI(p + '.svg')).then(r => r.text()) });
+  await navigator.clipboard.writeText(JSON.stringify({ type: 'showtime-wireframes', items }));
+  all.classList.add('done'); all.textContent = `✓ Copied ${items.length} wireframes`;
+};
+list.append(all);
+for (const [g, items] of Object.entries(groups)) {
+  list.insertAdjacentHTML('beforeend', `<h2>${g}</h2>`);
+  items.forEach(path => {
+    const b = document.createElement('button');
+    b.textContent = path.split('/')[1]; b.dataset.path = path;
+    b.onclick = async () => {
+      const svg = await fetch(encodeURI(path + '.svg')).then(r => r.text());
+      await navigator.clipboard.writeText(svg);
+      b.classList.add('done'); b.textContent = '✓ Copied: ' + path.split('/')[1];
+    };
+    list.append(b);
+  });
+}
+</script>
+</body>
+</html>

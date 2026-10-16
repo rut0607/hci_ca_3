@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Sending wireframes to Figma</title></head>
+<body style="font:15px -apple-system,sans-serif;margin:24px">
+<!-- Opened from a Figma tab: hands every wireframe SVG to the opener with
+     postMessage (Figma's CSP blocks fetching them directly), then closes. -->
+<p id="s">Sending wireframes…</p>
+<script>
+const groups = {
+  flows: ['Flow 1 - Book a ticket', 'Flow 2 - Returning user', 'Flow 3 - Error recovery', 'Flow 4 - New user sign-up', 'Flow 5 - Manage a booking', 'Flow 6 - Organizer'],
+  desktop: ['01 Home', '02 Events - search and filter', '03 Event details', '04 Select tickets and seats', '05 Review and pay', '06 Payment failed', '07 Confirmation', '08 Saved events', '09 My tickets', '10 Log in', '11 Sign up', '12 Account settings', '13 Organizer dashboard', '14 Create event', '15 Help centre', '16 404', '17 Sitemap and user flows'],
+  mobile: ['01 Home', '02 Events', '03 Event details', '04 Select tickets', '05 Review and pay', '07 Confirmation', '09 My tickets', '10 Log in']
+};
+(async () => {
+  const items = [];
+  for (const [group, names] of Object.entries(groups))
+    for (const name of names) items.push({ group, name, svg: await fetch(encodeURI(`${group}/${name}.svg`)).then(r => r.text()) });
+  window.opener.postMessage({ type: 'showtime-wireframes', items }, 'https://www.figma.com');
+  document.getElementById('s').textContent = `Sent ${items.length} wireframes. You can close this window.`;
+  setTimeout(() => window.close(), 800);
+})();
+</script>
+</body>
+</html>
